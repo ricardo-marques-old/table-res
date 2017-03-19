@@ -1,15 +1,16 @@
 import React from 'react'
-import DuckImage from '../assets/Duck.jpg'
+import canvasHandler from './canvasHandler'
 import './HomeView.scss'
 
-export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
-  </div>
-)
+class HomeView extends React.Component {
+    componentDidMount () {
+        const element = document.getElementById('canvas')
+        setTimeout(() => canvasHandler(element))
+    }
+
+    render () {
+        return <div id='canvas' />
+    }
+}
 
 export default HomeView
