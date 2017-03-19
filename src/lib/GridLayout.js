@@ -1,6 +1,6 @@
 const gridConfig ={
-    xValues: 20,
-    yValues: 10,
+    xValues: 50,
+    yValues: 50,
     gridWidth: 3,
     paddingRatio: 0.2,
     strokeWidth: 3
@@ -18,6 +18,7 @@ class GridLayout {
         this.e.appendChild(this.canvasElement)
         this.c = this.canvasElement.getContext('2d')
 
+        this.shapes = {}
         this.init()
     }
 
@@ -38,7 +39,14 @@ class GridLayout {
         })
 
         this.setOnCanvas({ width, height })
-        this.c.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+
+        // start fresh
+        this.c.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height)
+        this.reDrawShapes()
+    }
+
+    reDrawShapes () {
+        Object.keys(this.shapes).map(x => Object.keys(this.shapes[x]).map(y => this.drawShape(this.shapes[x][y])))
     }
 
     getWidthHeightOfElement (e) {
@@ -100,6 +108,12 @@ class GridLayout {
                 this.c.arc(position.x, position.y, radius, 0, 2 * Math.PI)
                 this.c.stroke()
         }
+    }
+
+    addShape (shape) {
+        this.shapes[shape.x] = this.shapes[shape.x] || {}
+        this.shapes[shape.x][shapes.y] = shape
+        this.drawShape(shape)
     }
 
     drawGrid () {

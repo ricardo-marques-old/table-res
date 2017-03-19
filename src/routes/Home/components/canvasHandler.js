@@ -4,7 +4,7 @@ export default function (element) {
     const c = new GridLayout({
         e: element
     })
-    c.drawShape({
+    c.addShape({
         id: 250,
         name: '250',
         type: 'circle',
