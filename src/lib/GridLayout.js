@@ -12,8 +12,9 @@ const shapes = {
 }
 
 class GridLayout {
-    constructor ({ e, shapes }) {
+    constructor ({ e, shapes, callbacks }) {
         this.config = gridConfig
+        this.callbacks = callbacks
 
         this.e = e
         this.canvasElement = document.createElement('CANVAS')
@@ -89,6 +90,11 @@ class GridLayout {
             this.activeElement = { x, y }
             this.shapes[x][y].active = true
             this.drawShape(x, y)
+            this.callbacks.shapeClick({
+                shape: this.shapes[x][y],
+                x,
+                y
+            })
         }
     }
 

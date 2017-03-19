@@ -20,6 +20,13 @@ export default function (element) {
                     sits: 4
                 }
             }
+        },
+        callbacks: {
+            shapeClick: ({ shape, x, y }) => {
+                console.log('shape clicked', shape)
+                console.log('x', x)
+                console.log('y', y)
+            }
         }
     })
     c.drawGrid()
