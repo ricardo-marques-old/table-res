@@ -12,7 +12,7 @@ const shapes = {
 }
 
 class GridLayout {
-    constructor ({ e }) {
+    constructor ({ e, shapes }) {
         this.config = gridConfig
 
         this.e = e
@@ -22,7 +22,7 @@ class GridLayout {
         this.c = this.canvasElement.getContext('2d')
 
         this.shapeConfigs = {}
-        this.shapes = {}
+        this.shapes = shapes || {}
         this.init()
         window.onresize = () => {
             this.init()
@@ -32,6 +32,7 @@ class GridLayout {
 
     init () {
         Object.keys(this.shapeConfigs).forEach(shapeType => {
+            // this will cache variables like circle radius, square width, etc.
             this.shapeConfigs[shapeType] = {}
         })
 
@@ -54,12 +55,17 @@ class GridLayout {
         this.c.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height)
         
         this.setFontSize()
-        this.reDrawShapes()
+        this.drawShapes()
         this.config.gridActive && this.drawGrid()
     }
 
     resetCanvasStyles () {
         this.c.fillStyle = 'black'
+    }
+
+    setShapes (newShapes) {
+        this.shapes = newShapes
+        this.init()
     }
 
     handleClick (e) {
@@ -73,14 +79,16 @@ class GridLayout {
         const y = Math.ceil(yPos / this.layoutUnitSize)
 
         if (this.activeElement) { // reset a previously active element
-            this.activeElement.active = false
-            this.drawShape(this.activeElement)
+            const { x, y } = this.activeElement
+            this.shapes[x][y].active = false
+            this.drawShape(x, y)
+            this.activeElement = null
         }
 
         if (this.shapes[x] && this.shapes[x][y]) {
-            this.activeElement = this.shapes[x][y]
-            this.activeElement.active = true
-            this.drawShape(this.activeElement)
+            this.activeElement = { x, y }
+            this.shapes[x][y].active = true
+            this.drawShape(x, y)
         }
     }
 
@@ -88,8 +96,8 @@ class GridLayout {
         this.c.font = `${this.config.fontSize}px sans-serif`
     }
 
-    reDrawShapes () {
-        Object.keys(this.shapes).map(x => Object.keys(this.shapes[x]).map(y => this.drawShape(this.shapes[x][y])))
+    drawShapes () {
+        Object.keys(this.shapes).forEach(x => Object.keys(this.shapes[x]).forEach(y => this.drawShape(x, y)))
     }
 
     getWidthHeightOfElement (e) {
@@ -126,7 +134,8 @@ class GridLayout {
         return Math.floor(diameter / 2)
     }
 
-    drawShape (shape) {
+    drawShape (x, y) {
+        const shape = this.shapes[x][y]
         this.c.lineWidth = this.config.strokeWidth
 
         if (!this.shapeConfigs[shape.type]) {
@@ -134,8 +143,8 @@ class GridLayout {
         }
 
         const position = {
-            x: ((shape.x - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize),
-            y: ((shape.y - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize)
+            x: ((x - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize),
+            y: ((y - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize)
         }
 
         switch (shape.type) {
