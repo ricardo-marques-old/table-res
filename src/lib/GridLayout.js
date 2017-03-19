@@ -229,6 +229,44 @@ class GridLayout {
         }
         this.config.gridActive = true
     }
+
+    addColumn (end) {
+        if (end) {
+            this.config.xValues++
+            this.init()
+        } else {
+            this.config.xValues++
+            const newShapes = {}
+            Object.keys(this.shapes).forEach(x => {
+                Object.keys(this.shapes[x]).forEach(y => {
+                    this.shapes[x][y].x++
+                })
+                newShapes[Number(x) + 1] = this.shapes[x]
+            })
+            this.shapes = newShapes
+            this.init()
+        }
+    }
+
+    addRow (end) {
+        if (end) {
+            this.config.yValues++
+            this.init()
+        } else {
+            this.config.yValues++
+            const newShapes = {}
+            Object.keys(this.shapes).forEach(x => {
+                newShapes[x] = {}
+                Object.keys(this.shapes[x]).forEach(y => {
+                    newShapes[x][Number(y) + 1] = Object.assign({}, this.shapes[x][y], {
+                        y: this.shapes[x][y].y + 1
+                    })
+                })
+            })
+            this.shapes = newShapes
+            this.init()
+        }
+    }
 }
 
 export default GridLayout

@@ -29,4 +29,7 @@ export default function (element) {
         y: 10
     })
     c.drawGrid()
+    setTimeout(() => {
+        c.addRow()
+    }, 1000)
 }
