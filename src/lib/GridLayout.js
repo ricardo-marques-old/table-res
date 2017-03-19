@@ -1,10 +1,10 @@
 const gridConfig ={
-    xValues: 20,
-    yValues: 20,
+    xValues: 25,
+    yValues: 25,
     gridWidth: 1,
-    paddingRatio: 0.1,
+    paddingRatio: 0.15,
     strokeWidth: 1,
-    fontSize: 18
+    fontSize: 16
 }
 
 const shapes = {
@@ -182,20 +182,21 @@ class GridLayout {
         this.c.beginPath()
         // c.arc(xCenter, yCenter, radius, begin arch, end arch)
         this.c.arc(position.x, position.y, radius, 0, 2 * Math.PI)
-        this.c.stroke()
         if (shape.active) {
-            this.c.fillStyle = '#01579B'
+            this.c.fillStyle = '#304FFE'
+            this.c.fill()
+            this.c.fillStyle = 'white'
+        } else if (shape.takenBy) {
+            this.c.fillStyle = '#E64A19'
             this.c.fill()
             this.c.fillStyle = 'white'
         } else {
-            this.c.fillStyle = 'white'
+            this.c.fillStyle = '#00C853'
             this.c.fill()
-            this.resetCanvasStyles()
+            this.c.fillStyle = 'white'
         }
         shape.name && this.drawText(shape.name, position, radius * 2)
-        if (shape.active) {
-            this.resetCanvasStyles()
-        }
+        this.resetCanvasStyles()
     }
 
     drawGrid () {

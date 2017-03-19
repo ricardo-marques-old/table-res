@@ -9,7 +9,12 @@ export default function (element) {
                     id: 250,
                     name: '250',
                     type: 'circle',
-                    sits: 4
+                    sits: 4,
+                    takenBy: {
+                        name: 'Ricardo Marques',
+                        timestamp: new Date(),
+                        guests: 2
+                    }
                 }
             },
             5: {
