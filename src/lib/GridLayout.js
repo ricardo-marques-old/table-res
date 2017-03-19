@@ -1,9 +1,10 @@
 const gridConfig ={
     xValues: 20,
     yValues: 20,
-    gridWidth: 3,
-    paddingRatio: 0.2,
-    strokeWidth: 3
+    gridWidth: 1,
+    paddingRatio: 0.1,
+    strokeWidth: 1,
+    fontSize: 18
 }
 
 const shapes = {
@@ -26,6 +27,7 @@ class GridLayout {
         window.onresize = () => {
             this.init()
         }
+        this.canvasElement.addEventListener('click', this.handleClick.bind(this))
     }
 
     init () {
@@ -51,8 +53,39 @@ class GridLayout {
         // start fresh
         this.c.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height)
         
+        this.setFontSize()
         this.reDrawShapes()
         this.config.gridActive && this.drawGrid()
+    }
+
+    resetCanvasStyles () {
+        this.c.fillStyle = 'black'
+    }
+
+    handleClick (e) {
+        const elemLeft = this.canvasElement.offsetLeft
+        const elemTop = this.canvasElement.offsetTop
+        
+        const xPos = e.pageX - elemLeft
+        const yPos = e.pageY - elemTop
+
+        const x = Math.ceil(xPos / this.layoutUnitSize)
+        const y = Math.ceil(yPos / this.layoutUnitSize)
+
+        if (this.activeElement) { // reset a previously active element
+            this.activeElement.active = false
+            this.drawShape(this.activeElement)
+        }
+
+        if (this.shapes[x] && this.shapes[x][y]) {
+            this.activeElement = this.shapes[x][y]
+            this.activeElement.active = true
+            this.drawShape(this.activeElement)
+        }
+    }
+
+    setFontSize () {
+        this.c.font = `${this.config.fontSize}px sans-serif`
     }
 
     reDrawShapes () {
@@ -108,12 +141,19 @@ class GridLayout {
         switch (shape.type) {
             case 'circle':
                 this.drawCircle(position, shape)
+                break
         }
+    }
+
+    drawText (text, position, maxWidth) {
+        const width = this.c.measureText(text).width
+        const height = this.config.fontSize
+        this.c.fillText(text, position.x - (width / 2), position.y + (height / 4), maxWidth)
     }
 
     addShape (shape) {
         this.shapes[shape.x] = this.shapes[shape.x] || {}
-        this.shapes[shape.x][shapes.y] = shape
+        this.shapes[shape.x][shape.y] = shape
         this.drawShape(shape)
     }
 
@@ -128,6 +168,19 @@ class GridLayout {
         // c.arc(xCenter, yCenter, radius, begin arch, end arch)
         this.c.arc(position.x, position.y, radius, 0, 2 * Math.PI)
         this.c.stroke()
+        if (shape.active) {
+            this.c.fillStyle = '#01579B'
+            this.c.fill()
+            this.c.fillStyle = 'white'
+        } else {
+            this.c.fillStyle = 'white'
+            this.c.fill()
+            this.resetCanvasStyles()
+        }
+        shape.name && this.drawText(shape.name, position, radius * 2)
+        if (shape.active) {
+            this.resetCanvasStyles()
+        }
     }
 
     drawGrid () {

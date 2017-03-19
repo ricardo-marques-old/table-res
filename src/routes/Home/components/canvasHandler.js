@@ -9,9 +9,24 @@ export default function (element) {
         name: '250',
         type: 'circle',
         sits: 4,
-        taken: false,
-        x: 7,
-        y: 1
+        x: 3,
+        y: 5
+    })
+    c.addShape({
+        id: 251,
+        name: '251',
+        type: 'circle',
+        sits: 4,
+        x: 5,
+        y: 9
+    })
+    c.addShape({
+        id: 1,
+        name: '1',
+        type: 'circle',
+        sits: 4,
+        x: 8,
+        y: 10
     })
     c.drawGrid()
 }
