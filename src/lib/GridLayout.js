@@ -1,6 +1,6 @@
 const gridConfig ={
-    xValues: 50,
-    yValues: 50,
+    xValues: 20,
+    yValues: 20,
     gridWidth: 3,
     paddingRatio: 0.2,
     strokeWidth: 3
@@ -12,18 +12,26 @@ const shapes = {
 
 class GridLayout {
     constructor ({ e }) {
+        this.config = gridConfig
+
         this.e = e
         this.canvasElement = document.createElement('CANVAS')
 
         this.e.appendChild(this.canvasElement)
         this.c = this.canvasElement.getContext('2d')
 
+        this.shapeConfigs = {}
         this.shapes = {}
         this.init()
+        window.onresize = () => {
+            this.init()
+        }
     }
 
     init () {
-        this.config = gridConfig
+        Object.keys(this.shapeConfigs).forEach(shapeType => {
+            this.shapeConfigs[shapeType] = {}
+        })
 
         const { widthOfElement, heightOfElement } = this.getWidthHeightOfElement(this.e)
 
@@ -42,7 +50,9 @@ class GridLayout {
 
         // start fresh
         this.c.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height)
+        
         this.reDrawShapes()
+        this.config.gridActive && this.drawGrid()
     }
 
     reDrawShapes () {
@@ -78,18 +88,18 @@ class GridLayout {
 
     // only executes once after the grid is initialized, gets cached in drawShape
     getCircleRadius (shape) {
-        const size = {
-            x: shapes[shape.type].x * this.layoutUnitSize
-        }
-        return Math.floor(size.x / 2) - (this.layoutUnitSize * (this.config.paddingRatio / 2))
+        const diameter = 
+            (shapes[shape.type].x * this.layoutUnitSize) - (this.layoutUnitSize * this.config.paddingRatio)
+        return Math.floor(diameter / 2)
     }
 
     drawShape (shape) {
         this.c.lineWidth = this.config.strokeWidth
 
-        if (!this[shape.type]) {
-            this[shape.type] = {}
+        if (!this.shapeConfigs[shape.type]) {
+            this.shapeConfigs[shape.type] = {}
         }
+
         const position = {
             x: ((shape.x - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize),
             y: ((shape.y - 1) * this.layoutUnitSize) + (0.5 * this.layoutUnitSize)
@@ -97,16 +107,7 @@ class GridLayout {
 
         switch (shape.type) {
             case 'circle':
-                let radius
-                if (this[shape.type].radius != null) {
-                    radius = this[shape.type].radius
-                } else {
-                    this[shape.type].radius = radius = this.getCircleRadius(shape)
-                }
-                this.c.beginPath()
-                // c.arc(xCenter, yCenter, radius, begin arch, end arch)
-                this.c.arc(position.x, position.y, radius, 0, 2 * Math.PI)
-                this.c.stroke()
+                this.drawCircle(position, shape)
         }
     }
 
@@ -114,6 +115,19 @@ class GridLayout {
         this.shapes[shape.x] = this.shapes[shape.x] || {}
         this.shapes[shape.x][shapes.y] = shape
         this.drawShape(shape)
+    }
+
+    drawCircle (position, shape) {
+        let radius
+        if (this.shapeConfigs[shape.type].radius != null) {
+            radius = this.shapeConfigs[shape.type].radius
+        } else {
+            this.shapeConfigs[shape.type].radius = radius = this.getCircleRadius(shape)
+        }
+        this.c.beginPath()
+        // c.arc(xCenter, yCenter, radius, begin arch, end arch)
+        this.c.arc(position.x, position.y, radius, 0, 2 * Math.PI)
+        this.c.stroke()
     }
 
     drawGrid () {
@@ -160,6 +174,7 @@ class GridLayout {
             }
             this.c.fillRect(0, startY, width, height)
         }
+        this.config.gridActive = true
     }
 }
 
