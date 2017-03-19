@@ -13,4 +13,5 @@ export default function (element) {
         x: 7,
         y: 1
     })
+    c.drawGrid()
 }
