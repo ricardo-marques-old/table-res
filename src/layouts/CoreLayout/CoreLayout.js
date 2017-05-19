@@ -4,9 +4,9 @@ import './CoreLayout.scss'
 import '../../styles/core.scss'
 
 export const CoreLayout = ({ children }) => (
-    <div className='core-layout__viewport'>
-        {children}
-    </div>
+  <div className='core-layout__viewport'>
+    {children}
+  </div>
 )
 
 CoreLayout.propTypes = {

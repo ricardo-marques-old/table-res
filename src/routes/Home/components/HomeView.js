@@ -1,16 +1,16 @@
 import React from 'react'
 import canvasHandler from './canvasHandler'
 import './HomeView.scss'
+import ShapePicker from 'components/ShapePicker'
 
 class HomeView extends React.Component {
-    componentDidMount () {
-        const element = document.getElementById('canvas')
-        setTimeout(() => canvasHandler(element))
-    }
-
-    render () {
-        return <div id='canvas' />
-    }
+  render () {
+    return (
+      <div>
+        <ShapePicker />
+      </div>
+    );
+  }
 }
 
 export default HomeView
